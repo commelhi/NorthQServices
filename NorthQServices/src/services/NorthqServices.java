@@ -30,12 +30,12 @@ public class NorthqServices {
 
         // possible mapping errors
         Response houseResponse = getCurrentUserHouses(user.user + "", user.token);
-        HouseHolder householder = gson.fromJson(houseResponse.readEntity(String.class), HouseHolder.class);
-        House house = householder.houses.get(0); // default hack
+        House[] householder = gson.fromJson(houseResponse.readEntity(String.class), House[].class);
+        House house = householder[0]; // default hack
 
         Response gatewaysResponse = getHouseGateways(house.id + "", user.user + "", user.token);
-        GatewayHolder gatewayHolder = gson.fromJson(gatewaysResponse.readEntity(String.class), GatewayHolder.class);
-        Gateway gateway = gatewayHolder.gateways.get(0);
+        Gateway[] gatewayArray = gson.fromJson(gatewaysResponse.readEntity(String.class), Gateway[].class);
+        Gateway gateway = gatewayArray[0];
         // String gatewayId, String userId, String token
         Response gatewayStatusResponse = getGatewayStatus(gateway.serial_nr, user.user + "", user.token);
         GatewayStatus gatewayStatus = gson.fromJson(gatewayStatusResponse.readEntity(String.class),
