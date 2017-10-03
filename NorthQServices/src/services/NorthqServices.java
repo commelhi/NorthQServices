@@ -1,18 +1,32 @@
 package services;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 
+import com.google.gson.Gson;
+
+import model.NorthNetwork;
 import model.Qmotion;
 import model.Qplug;
+import model.json.House;
+import model.json.User;
 
 public class NorthqServices {
     private NetworkUtils networkUtils = new NetworkUtils();
+
+    public NorthNetwork mapNorthQNetwork(String username, String password) throws Exception {
+        Gson gson = new Gson();
+        Response loginResponse = postLogin(username, password);
+        User user = gson.fromJson(loginResponse.readEntity(String.class), User.class);
+
+        Response houseResponse = getCurrentUserHouses(user.user + "", user.token);
+        House house = gson.fromJson(houseResponse.readEntity(String.class), House.class);
+
+        Response gatewaysResponse;
+        return null;
+    }
 
     // Requires: user name and password for login
     // Returns: a string representation of JSON object returned by northQ restful services
@@ -30,7 +44,6 @@ public class NorthqServices {
         }
 
     }
-  
 
     // Requires: gatewayId, userId and a token (all strings)
     // Returns: A http response
