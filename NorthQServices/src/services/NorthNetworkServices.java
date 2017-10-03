@@ -4,14 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import model.Qplug;
 
 public class NorthNetworkServices {
     private NetworkUtils networkUtils = new NetworkUtils();
@@ -71,7 +68,7 @@ public class NorthNetworkServices {
     // Requires:
     // Returns: An http response
     public String getTokenString(String userId, String password) throws IOException, Exception {
-        return getJsonMap(getTokenJSON(userId, password)).get("token").toString();
+        return networkUtils.getJsonMap(getTokenJSON(userId, password)).get("token").toString();
     }
 
     // Requires:
@@ -130,10 +127,30 @@ public class NorthNetworkServices {
         return networkUtils.getHttpGetResponse(url);
     }
 
-    // Requires: a JSON formatted string
-    // Returns: A map consisting of objects translated from JSON
-    public Map<String, Object> getJsonMap(String jsonString) throws IOException {
-        return new Gson().fromJson(jsonString, new TypeToken<HashMap<String, Object>>() {
-        }.getType());
+    public boolean turnOnPlug(Qplug plug, String token) throws IOException, Exception {
+        return updateQplugStatus(plug, token, 1);
     }
+
+    public boolean turnOffPlug(Qplug plug, String token) throws IOException, Exception {
+        return updateQplugStatus(plug, token, 0);
+    }
+
+    public boolean updateQplugStatus(int status, String token) throws IOException, Exception {
+        Form form = new Form();
+        form.param("user", "2166");
+        form.param("token", token);
+        form.param("gateway", "0000003652");
+        form.param("node_id", "2");
+        String stat = "0";
+
+        if (status > 0) {
+            stat = "255";
+        }
+        form.param("pos", stat);
+
+        String response = nu.getHttpPostResponse("https://homemanager.tv/main/setBinaryValue", form)
+                .readEntity(String.class);
+        return nu.getJsonMap(response).get("success").toString().equals("1.0");
+    }
+
 }
