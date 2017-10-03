@@ -1,4 +1,4 @@
-package Model.JsonModel;
+package model.json;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package Model.JsonModel;
+package model.json;
 
 public class VersionV2Model {
 
