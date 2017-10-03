@@ -11,6 +11,7 @@ import model.NorthNetwork;
 import model.Qmotion;
 import model.Qplug;
 import model.json.House;
+import model.json.HouseHolder;
 import model.json.User;
 
 public class NorthqServices {
@@ -22,9 +23,10 @@ public class NorthqServices {
         User user = gson.fromJson(loginResponse.readEntity(String.class), User.class);
 
         Response houseResponse = getCurrentUserHouses(user.user + "", user.token);
-        House house = gson.fromJson(houseResponse.readEntity(String.class), House.class);
+        HouseHolder householder = gson.fromJson(houseResponse.readEntity(String.class), HouseHolder.class);
+        House house = householder.houses.get(0); // default hack
 
-        Response gatewaysResponse;
+        Response gatewaysResponse = getHouseGateways(house.id + "", user.user + "", user.token);
         return null;
     }
 
