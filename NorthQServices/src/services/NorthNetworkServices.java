@@ -49,9 +49,9 @@ public class NorthNetworkServices {
 
     // Requires:
     // Returns: An http response
-    public String[] getTokenString(String userId, String password) throws IOException, Exception {
-        return networkUtils.getJsonMap(getTokenJSON(userId, password)).get("token").toString();
-    }
+    // public String[] getTokenString(String userId, String password) throws IOException, Exception {
+    // return networkUtils.getJsonMap(getTokenJSON(userId, password)).get("token").toString();
+    // }
 
     // Requires:
     // Returns: Returns true/false depending on whether or not token is still valid
