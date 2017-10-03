@@ -127,20 +127,27 @@ public class NorthNetworkServices {
         return networkUtils.getHttpGetResponse(url);
     }
 
-    public boolean turnOnPlug(Qplug plug, String token) throws IOException, Exception {
-        return updateQplugStatus(plug, token, 1);
+    // Requires: A q-plug, the token, user and gatewayId
+    // Returns: returns true if successfully turned on
+    public boolean turnOnPlug(Qplug plug, String token, String user, String gatewayId) throws IOException, Exception {
+        return updateQplugStatus(plug, token, user, gatewayId, 1);
     }
 
-    public boolean turnOffPlug(Qplug plug, String token) throws IOException, Exception {
-        return updateQplugStatus(plug, token, 0);
+    // Requires: A q-plug, the token, user and gatewayId
+    // Returns: returns true if successfully turned off
+    public boolean turnOffPlug(Qplug plug, String token, String user, String gatewayId) throws IOException, Exception {
+        return updateQplugStatus(plug, token, user, gatewayId, 0);
     }
 
-    public boolean updateQplugStatus(int status, String token) throws IOException, Exception {
+    // Requires: A q-plug, the token, user and gatewayId, boolean on/off
+    // Returns: returns true if successfully turned on
+    public boolean updateQplugStatus(Qplug plug, String token, String user, String gatewayId, int status)
+            throws IOException, Exception {
         Form form = new Form();
-        form.param("user", "2166");
+        form.param("user", user);
         form.param("token", token);
-        form.param("gateway", "0000003652");
-        form.param("node_id", "2");
+        form.param("gateway", gatewayId);
+        form.param("node_id", plug.getId());
         String stat = "0";
 
         if (status > 0) {
@@ -148,9 +155,9 @@ public class NorthNetworkServices {
         }
         form.param("pos", stat);
 
-        String response = nu.getHttpPostResponse("https://homemanager.tv/main/setBinaryValue", form)
+        String response = networkUtils.getHttpPostResponse("https://homemanager.tv/main/setBinaryValue", form)
                 .readEntity(String.class);
-        return nu.getJsonMap(response).get("success").toString().equals("1.0");
+        return networkUtils.getJsonMap(response).get("success").toString().equals("1.0");
     }
 
 }

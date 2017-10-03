@@ -24,4 +24,21 @@ public class Gateway {
             things.add(new Qthermostat(termostat.get(i)));
         }
     }
+
+    public String getGatewayId() {
+        return gatewayId;
+    }
+
+    public void setGatewayId(String gatewayId) {
+        this.gatewayId = gatewayId;
+    }
+
+    public ArrayList<Thing> getThings() {
+        return things;
+    }
+
+    public void setThings(ArrayList<Thing> things) {
+        this.things = things;
+    }
+
 }

@@ -10,4 +10,12 @@ public class Qmotion extends Thing implements IThing {
         this.bs = bs;
     }
 
+    public BinarySensor getBs() {
+        return bs;
+    }
+
+    public void setBs(BinarySensor bs) {
+        this.bs = bs;
+    }
+
 }
