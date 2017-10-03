@@ -6,9 +6,9 @@ public class NorthNetwork {
     private String token;
     private String userId;
     private String houseId;
-    private ArrayList<Gateway> gateways;
+    private ArrayList<NGateway> gateways;
 
-    public NorthNetwork(String token, String userId, String houseId, ArrayList<Gateway> gateways) {
+    public NorthNetwork(String token, String userId, String houseId, ArrayList<NGateway> gateways) {
         super();
         this.token = token;
         this.userId = userId;
@@ -40,12 +40,16 @@ public class NorthNetwork {
         this.houseId = houseId;
     }
 
-    public ArrayList<Gateway> getGateways() {
+    public ArrayList<NGateway> getGateways() {
         return gateways;
     }
 
-    public void setGateways(ArrayList<Gateway> gateways) {
+    public void setGateways(ArrayList<NGateway> gateways) {
         this.gateways = gateways;
     }
 
+    @Override
+    public String toString() {
+        return token;
+    }
 }

@@ -1,15 +1,20 @@
 package services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 
+import model.NGateway;
 import model.NorthNetwork;
 import model.Qmotion;
 import model.Qplug;
+import model.json.Gateway;
+import model.json.GatewayHolder;
+import model.json.GatewayStatus;
 import model.json.House;
 import model.json.HouseHolder;
 import model.json.User;
@@ -17,17 +22,30 @@ import model.json.User;
 public class NorthqServices {
     private NetworkUtils networkUtils = new NetworkUtils();
 
+    // Untested!!!
     public NorthNetwork mapNorthQNetwork(String username, String password) throws Exception {
         Gson gson = new Gson();
         Response loginResponse = postLogin(username, password);
         User user = gson.fromJson(loginResponse.readEntity(String.class), User.class);
 
+        // possible mapping errors
         Response houseResponse = getCurrentUserHouses(user.user + "", user.token);
         HouseHolder householder = gson.fromJson(houseResponse.readEntity(String.class), HouseHolder.class);
         House house = householder.houses.get(0); // default hack
 
         Response gatewaysResponse = getHouseGateways(house.id + "", user.user + "", user.token);
-        return null;
+        GatewayHolder gatewayHolder = gson.fromJson(gatewaysResponse.readEntity(String.class), GatewayHolder.class);
+        Gateway gateway = gatewayHolder.gateways.get(0);
+        // String gatewayId, String userId, String token
+        Response gatewayStatusResponse = getGatewayStatus(gateway.serial_nr, user.user + "", user.token);
+        GatewayStatus gatewayStatus = gson.fromJson(gatewayStatusResponse.readEntity(String.class),
+                GatewayStatus.class);
+        NGateway nGateway = new NGateway(gateway.serial_nr, gatewayStatus);
+        ArrayList<NGateway> gateways = new ArrayList<NGateway>();
+        gateways.add(nGateway);
+        NorthNetwork network = new NorthNetwork(user.token, user.user + "", house.id + "", gateways);
+
+        return network;
     }
 
     // Requires: user name and password for login
@@ -49,7 +67,7 @@ public class NorthqServices {
 
     // Requires: gatewayId, userId and a token (all strings)
     // Returns: A http response
-    public Response getGatawayStatus(String gatewayId, String userId, String token) throws IOException, Exception {
+    public Response getGatewayStatus(String gatewayId, String userId, String token) throws IOException, Exception {
         String URL = "https://homemanager.tv/main/getGatewayStatus?gateway=" + gatewayId + "&user=" + userId + "&token="
                 + token;
         Response response = networkUtils.getHttpGetResponse(URL);

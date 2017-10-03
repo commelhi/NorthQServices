@@ -4,6 +4,5 @@ import java.util.ArrayList;
 
 public class GatewayHolder {
 
-	
-	ArrayList<Gateway> gateways;
+    public ArrayList<Gateway> gateways;
 }
