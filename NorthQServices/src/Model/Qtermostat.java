@@ -1,5 +1,5 @@
 package Model;
 
-public class Qtermostat extends Thing implements IThing {
+public class Qtermostat extends Thing {
 
 }
