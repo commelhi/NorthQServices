@@ -14,50 +14,23 @@ import model.Qplug;
 public class NorthqServices {
     private NetworkUtils networkUtils = new NetworkUtils();
 
-    // Requires:
+    // Requires: user name and password for login
     // Returns: a string representation of JSON object returned by northQ restful services
-    public String getTokenJSON() throws Exception {
+    public Response postLogin(String username, String password) throws Exception {
         Form form = new Form();
-        ArrayList<String> info = logInInfo();
-        form.param("username", info.get(0));
-        form.param("password", info.get(1));
+        form.param("username", username);
+        form.param("password", password);
         Response response = networkUtils.getHttpPostResponse("https://homemanager.tv/token/new.json", form);
         // Test success of request
         if (response.getStatus() == 200) {
-            String json = response.readEntity(String.class);
-            response.close();
-            return json;
+            return response;
         } else {
             response.close();
             throw new NullPointerException("token not recieved http error code: " + response.getStatus());
         }
 
     }
-
-    // Requires:
-    // Returns: An arraylist containing username and password
-    public ArrayList<String> logInInfo() throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader("C:\\file.txt"));
-        ArrayList<String> list = new ArrayList<String>();
-        String line = br.readLine();
-        list.add(line);
-        line = br.readLine();
-        list.add(line);
-        br.close();
-        return list;
-    }
-
-    // Requires:
-    // Returns: An http response
-    // public String[] getTokenString(String userId, String password) throws IOException, Exception {
-    // return networkUtils.getJsonMap(getTokenJSON(userId, password)).get("token").toString();
-    // }
-
-    // Requires:
-    // Returns: Returns true/false depending on whether or not token is still valid
-    public boolean verifyToken() {
-        return false;
-    }
+  
 
     // Requires: gatewayId, userId and a token (all strings)
     // Returns: A http response
@@ -65,7 +38,6 @@ public class NorthqServices {
         String URL = "https://homemanager.tv/main/getGatewayStatus?gateway=" + gatewayId + "&user=" + userId + "&token="
                 + token;
         Response response = networkUtils.getHttpGetResponse(URL);
-        System.out.println(response.readEntity(String.class));
         return response;
     }
 
