@@ -8,29 +8,11 @@ import java.util.ArrayList;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 
+import model.Qmotion;
 import model.Qplug;
 
 public class NorthNetworkServices {
     private NetworkUtils networkUtils = new NetworkUtils();
-
-    // Requires:
-    // Returns: a string representation of JSON object returned by northQ restful services
-    public String getTokenJSON(String userId, String password) throws IOException, Exception {
-        Form form = new Form();
-        form.param("username", userId);
-        form.param("password", password);
-        Response response = networkUtils.getHttpPostResponse("https://homemanager.tv/token/new.json", form);
-        // Test success of request
-        if (response.getStatus() == 200) {
-            String json = response.readEntity(String.class);
-            response.close();
-            return json;
-        } else {
-            String json = response.readEntity(String.class);
-            response.close();
-            return json;
-        }
-    }
 
     // Requires:
     // Returns: a string representation of JSON object returned by northQ restful services
@@ -67,7 +49,7 @@ public class NorthNetworkServices {
 
     // Requires:
     // Returns: An http response
-    public String getTokenString(String userId, String password) throws IOException, Exception {
+    public String[] getTokenString(String userId, String password) throws IOException, Exception {
         return networkUtils.getJsonMap(getTokenJSON(userId, password)).get("token").toString();
     }
 
@@ -147,7 +129,7 @@ public class NorthNetworkServices {
         form.param("user", user);
         form.param("token", token);
         form.param("gateway", gatewayId);
-        form.param("node_id", plug.getId());
+        form.param("node_id", plug.getNodeId());
         String stat = "0";
 
         if (status > 0) {
@@ -158,6 +140,32 @@ public class NorthNetworkServices {
         String response = networkUtils.getHttpPostResponse("https://homemanager.tv/main/setBinaryValue", form)
                 .readEntity(String.class);
         return networkUtils.getJsonMap(response).get("success").toString().equals("1.0");
+    }
+
+    // Requires: requires a token
+    // Returns: returns the http response
+    public Response armMotion(String user, String token, String gatewayId, Qmotion motion)
+            throws IOException, Exception {
+        Form form = new Form();
+        form.param("user", user);
+        form.param("token", token);
+        form.param("gateway_id", gatewayId);
+        form.param("node_id", motion.getNodeID());
+        Response response = networkUtils.getHttpPostResponse("https://homemanager.tv/main/reArmUserComponent", form);
+        return response;
+    }
+
+    // Requires: requires a token
+    // Returns: returns the http response
+    public Response disarmMotion(String user, String token, String gatewayId, Qmotion motion)
+            throws IOException, Exception {
+        Form form = new Form();
+        form.param("user", user);
+        form.param("token", token);
+        form.param("gateway_id", gatewayId);
+        form.param("node_id", motion.getNodeID());
+        Response response = networkUtils.getHttpPostResponse("https://homemanager.tv/main/disArmUserComponent", form);
+        return response;
     }
 
 }

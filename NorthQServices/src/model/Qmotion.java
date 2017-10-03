@@ -18,4 +18,7 @@ public class Qmotion extends Thing implements IThing {
         this.bs = bs;
     }
 
+    public String getNodeId() {
+        return bs.node_id + "";
+    }
 }

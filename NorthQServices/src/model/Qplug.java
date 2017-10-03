@@ -18,7 +18,7 @@ public class Qplug extends Thing implements IThing {
         this.bs = bs;
     }
 
-    public String getId() {
+    public String getNodeId() {
         return bs.node_id + "";
     }
 }
