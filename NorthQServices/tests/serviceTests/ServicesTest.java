@@ -218,7 +218,7 @@ public class ServicesTest {
         mock.UserNotifications.add(mockNot);
         assertTrue(ns.isTriggered(mock));
 
-        mockNot.notification.timestamp = 5000000 / 1000;
+        mockNot.notification.timestamp = 20000;
         mock.UserNotifications.remove(0);
         mock.UserNotifications.add(mockNot);
         assertTrue(!ns.isTriggered(mock));
