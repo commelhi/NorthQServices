@@ -173,16 +173,13 @@ public class NorthqServices {
 
     // Requires: a user, token,houseId and a pagenumber as strings
     // Returns: an UserNotificationHolder
-    public UserNotificationHolder getNotificationArray(String user, String token, String houseId, String pageNum) {
-        try {
-            Response response = getNotifications(user, token, houseId, pageNum);
-            String jsonString = response.readEntity(String.class);
-            UserNotificationHolder notifications = gson.fromJson(jsonString, UserNotificationHolder.class);
-            return notifications;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    public UserNotificationHolder getNotificationArray(String user, String token, String houseId, String pageNum)
+            throws IOException, Exception {
+        Response response = getNotifications(user, token, houseId, pageNum);
+        String jsonString = response.readEntity(String.class);
+        UserNotificationHolder notifications = gson.fromJson(jsonString, UserNotificationHolder.class);
+        return notifications;
+
     }
 
     // Requires: a UserNotificationsHolder object
