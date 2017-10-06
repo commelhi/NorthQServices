@@ -21,11 +21,11 @@ import model.json.UserNotificationHolder;
 
 public class NorthqServices {
     private NetworkUtils networkUtils = new NetworkUtils();
+    private Gson gson = new Gson();
 
     // Requires: a username and password
     // Returns: returns the NorthNetwork object
     public NorthNetwork mapNorthQNetwork(String username, String password) throws Exception {
-        Gson gson = new Gson();
         User user = postLogin(username, password);
 
         // Gets houses.
@@ -59,7 +59,6 @@ public class NorthqServices {
         Response response = networkUtils.getHttpPostResponse("https://homemanager.tv/token/new.json", form);
         // Test success of request
         if (response.getStatus() == 200) {
-            Gson gson = new Gson();
             User user = gson.fromJson(response.readEntity(String.class), User.class);
             response.close();
             return user;
@@ -79,32 +78,16 @@ public class NorthqServices {
         return response;
     }
 
-    // Requires: gatewayId, userId and a token (all strings)
-    // Returns: A http response
-    public String getGatewayStatusJSON(String gatewayId, String userId, String token) throws IOException, Exception {
-        String URL = "https://homemanager.tv/main/getGatewayStatus?gateway=" + gatewayId + "&user=" + userId + "&token="
-                + token;
-        Response response = networkUtils.getHttpGetResponse(URL);
-        if (response.getStatus() == 200) {
-            String json = response.readEntity(String.class);
-            response.close();
-            return json;
-        } else {
-            response.close();
-            return "";
-        }
-    }
-
     // Requires: a userId and a token both strings
     // Returns: A http response
-    public Response getCurrentUserHouses(String userId, String token) throws IOException, Exception {
+    private Response getCurrentUserHouses(String userId, String token) throws IOException, Exception {
         String url = "https://homemanager.tv/main/getCurrentUserHouses?user=" + userId + "&token=" + token;
         return networkUtils.getHttpGetResponse(url);
     }
 
     // Requires: a houseId, a userId and a token (all strings)
     // Returns: An http response
-    public Response getHouseGateways(String houseId, String userId, String token) throws IOException, Exception {
+    private Response getHouseGateways(String houseId, String userId, String token) throws IOException, Exception {
         String url = "https://homemanager.tv/main/getHouseGateways?house_id=" + houseId + "&user=" + userId + "&token="
                 + token;
         return networkUtils.getHttpGetResponse(url);
@@ -112,7 +95,7 @@ public class NorthqServices {
 
     // Requires: string representations of userId,token, houseId,page
     // Returns: An http response
-    public Response getNotifications(String userId, String token, String houseId, String page)
+    private Response getNotifications(String userId, String token, String houseId, String page)
             throws IOException, Exception {
         String url = "https://homemanager.tv/main/getUserNotifications?user=" + userId + "&token=" + token
                 + "&house_id=" + houseId + "&page=" + page;
@@ -133,7 +116,7 @@ public class NorthqServices {
 
     // Requires: A q-plug, the token, user and gatewayId, boolean on/off
     // Returns: returns true if successfully turned on
-    public boolean updateQplugStatus(Qplug plug, String token, String user, String gatewayId, int status)
+    private boolean updateQplugStatus(Qplug plug, String token, String user, String gatewayId, int status)
             throws IOException, Exception {
         Form form = new Form();
         form.param("user", user);
@@ -184,7 +167,6 @@ public class NorthqServices {
         try {
             Response response = getNotifications(user, token, houseId, pageNum);
             String jsonString = response.readEntity(String.class);
-            Gson gson = new Gson();
             UserNotificationHolder notifications = gson.fromJson(jsonString, UserNotificationHolder.class);
             return notifications;
         } catch (Exception e) {
@@ -193,14 +175,11 @@ public class NorthqServices {
         return null;
     }
 
+    // Requires: a UserNotificationsHolder object
+    // Returns: Whether or nor motions beeen detected in the last 30min
     public boolean isTriggered(UserNotificationHolder notifications) {
         UserNotification latestNotification = notifications.UserNotifications.get(0);
-
         long latestNotifTimestamp = latestNotification.notification.timestamp * 1000;
-
-        System.out.println("latest timestamp:" + latestNotifTimestamp);
-        System.out.println("current timestamp:" + System.currentTimeMillis());
-
         long diff = System.currentTimeMillis() - latestNotifTimestamp;
         if (diff < (30 * 60 * 1000)) { // 30 min
             return true;
