@@ -11,7 +11,7 @@ import model.NorthNetwork;
 import services.CredentialsService;
 import services.NorthqServices;
 
-public class ServiceMap {
+public class ServicesTest {
 
     @Before
     public void setUp() throws Exception {
@@ -26,6 +26,37 @@ public class ServiceMap {
         assertEquals(network.getUserId(), "2166");
         assertTrue(network.getHouses().length >= 1);
         // assertTrue(network.getGateways().size() >= 1);
+
+    }
+
+    /**/
+    @Test
+    public void plugOnTest() {
+
+    }
+
+    @Test
+    public void plugOffTest() {
+
+    }
+
+    @Test
+    public void motionArmTest() {
+
+    }
+
+    @Test
+    public void motionDisarmTest() {
+
+    }
+
+    @Test
+    public void notificanTest() {
+
+    }
+
+    @Test
+    public void triggerTest() {
 
     }
 
