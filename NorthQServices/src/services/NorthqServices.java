@@ -132,7 +132,7 @@ public class NorthqServices {
         form.param("user", user);
         form.param("token", token);
         form.param("gateway", gatewayId);
-        form.param("node_id", plug.getNodeId());
+        form.param("node_id", plug.getNodeID());
         String stat = "0";
 
         if (status > 0) {

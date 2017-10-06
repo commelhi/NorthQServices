@@ -22,7 +22,7 @@ public class Qplug extends Thing implements IThing {
         this.bs = bs;
     }
 
-    public String getNodeId() {
+    public String getNodeID() {
         return bs.node_id + "";
     }
 }

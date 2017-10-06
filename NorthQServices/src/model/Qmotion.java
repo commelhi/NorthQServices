@@ -10,6 +10,11 @@ public class Qmotion extends Thing implements IThing {
         this.bs = bs;
     }
 
+    public String getNodeID() {
+        return bs.node_id + "";
+
+    }
+
     public BinarySensor getBs() {
         return bs;
     }
@@ -19,7 +24,7 @@ public class Qmotion extends Thing implements IThing {
     }
 
     public boolean getStatus() {
-        return (bs.armed != 0);
+        return (bs.armed == 1);
     }
 
     public float getHumidity() {

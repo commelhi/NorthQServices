@@ -1,11 +1,6 @@
 package model;
 
-public class Thing implements IThing {
-
-    public String getNodeID() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+public abstract class Thing implements IThing {
 
     public boolean equals() {
         // TODO Auto-generated method stub

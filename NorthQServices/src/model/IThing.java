@@ -1,10 +1,11 @@
 package model;
 
 public interface IThing {
-    @Override
-    public String toString();
 
     public String getNodeID();
+
+    @Override
+    public String toString();
 
     public boolean equals();
 }

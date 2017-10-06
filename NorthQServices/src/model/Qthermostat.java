@@ -18,4 +18,9 @@ public class Qthermostat extends Thing implements IThing {
         this.ther = ther;
     }
 
+    public String getNodeID() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
