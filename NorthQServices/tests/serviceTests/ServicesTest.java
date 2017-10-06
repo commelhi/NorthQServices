@@ -14,17 +14,19 @@ import services.NorthqServices;
 public class ServicesTest {
     NorthqServices ns;
     CredentialsService cs;
+    ArrayList<String> user;
+    NorthNetwork network;
 
     @Before
     public void setUp() throws Exception {
         ns = new NorthqServices();
         cs = new CredentialsService();
+        user = cs.getUserCredentials();
+        network = ns.mapNorthQNetwork(user.get(0), user.get(1));
     }
 
     @Test
     public void mapGenerationTest() throws Exception {
-        ArrayList<String> user = cs.getUserCredentials();
-        NorthNetwork network = ns.mapNorthQNetwork(user.get(0), user.get(1));
         assertEquals(network.getUserId(), "2166");
         assertTrue(network.getHouses().length >= 1);
         // assertTrue(network.getGateways().size() >= 1);
