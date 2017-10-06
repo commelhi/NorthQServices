@@ -10,6 +10,10 @@ public class Qplug extends Thing implements IThing {
         this.bs = bs;
     }
 
+    public boolean getStatus() {
+        return (bs.pos != 0);
+    }
+
     public BinarySwitch getBs() {
         return bs;
     }
