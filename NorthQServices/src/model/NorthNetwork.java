@@ -2,18 +2,28 @@ package model;
 
 import java.util.ArrayList;
 
+import model.json.House;
+
 public class NorthNetwork {
     private String token;
     private String userId;
-    private String houseId;
+    private House[] houses;
     private ArrayList<NGateway> gateways;
 
-    public NorthNetwork(String token, String userId, String houseId, ArrayList<NGateway> gateways) {
+    public NorthNetwork(String token, String userId, House[] houses, ArrayList<NGateway> gateways) {
         super();
         this.token = token;
         this.userId = userId;
-        this.houseId = houseId;
+        this.houses = houses;
         this.gateways = gateways;
+    }
+
+    public House[] getHouses() {
+        return houses;
+    }
+
+    public void setHouses(House[] houses) {
+        this.houses = houses;
     }
 
     public String getToken() {
@@ -32,14 +42,6 @@ public class NorthNetwork {
         this.userId = userId;
     }
 
-    public String getHouseId() {
-        return houseId;
-    }
-
-    public void setHouseId(String houseId) {
-        this.houseId = houseId;
-    }
-
     public ArrayList<NGateway> getGateways() {
         return gateways;
     }
@@ -50,9 +52,8 @@ public class NorthNetwork {
 
     @Override
     public String toString() {
-        return "token: "+ token+
-        		"\ngateway id: "+gateways.get(0).getGatewayId()+
-        		"\nthings: "+gateways.get(0).getThings().size();
-        
+        return "token: " + token + "\ngateway id: " + gateways.get(0).getGatewayId() + "\nthings: "
+                + gateways.get(0).getThings().size();
+
     }
 }

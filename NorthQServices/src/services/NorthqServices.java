@@ -26,26 +26,36 @@ public class NorthqServices {
     // Requires: a username and password
     // Returns: returns the NorthNetwork object
     public NorthNetwork mapNorthQNetwork(String username, String password) throws Exception {
+        /*
+         * WARNING: THIS DOES NOT TAKE INTO ACCOUNT WHICH GATEWAYS BELONGS TO WHICH HOUSE
+         * TODO: Consider refactoring along the line.
+         */
+        ArrayList<NGateway> gateways = new ArrayList<NGateway>();
+
         User user = postLogin(username, password);
 
         // Gets houses.
         Response houseResponse = getCurrentUserHouses(user.user + "", user.token);
-        House[] householder = gson.fromJson(houseResponse.readEntity(String.class), House[].class);
-        House house = householder[0]; // default hack
+        House[] houseHolder = gson.fromJson(houseResponse.readEntity(String.class), House[].class);
 
-        // Gets house gateways.
-        Response gatewaysResponse = getHouseGateways(house.id + "", user.user + "", user.token);
-        Gateway[] gatewayArray = gson.fromJson(gatewaysResponse.readEntity(String.class), Gateway[].class);
-        Gateway gateway = gatewayArray[0];
+        // Get gateway for each house
+        for (int i = 0; i < houseHolder.length; i++) {
+            House house = houseHolder[i];
+            Response gatewaysResponse = getHouseGateways(house.id + "", user.user + "", user.token);
+            Gateway[] gatewayArray = gson.fromJson(gatewaysResponse.readEntity(String.class), Gateway[].class);
 
-        // Get gateway status for each gateway.
-        Response gatewayStatusResponse = getGatewayStatus(gateway.serial_nr, user.user + "", user.token);
-        GatewayStatus gatewayStatus = gson.fromJson(gatewayStatusResponse.readEntity(String.class),
-                GatewayStatus.class);
-        NGateway nGateway = new NGateway(gateway.serial_nr, gatewayStatus);
-        ArrayList<NGateway> gateways = new ArrayList<NGateway>();
-        gateways.add(nGateway);
-        NorthNetwork network = new NorthNetwork(user.token, user.user + "", house.id + "", gateways);
+            // Get gateway status for each gateway.
+            for (int j = 0; j < gatewayArray.length; j++) {
+                Gateway gateway = gatewayArray[j];
+                Response gatewayStatusResponse = getGatewayStatus(gateway.serial_nr, user.user + "", user.token);
+                GatewayStatus gatewayStatus = gson.fromJson(gatewayStatusResponse.readEntity(String.class),
+                        GatewayStatus.class);
+                NGateway nGateway = new NGateway(gateway.serial_nr, gatewayStatus);
+                gateways.add(nGateway);
+            }
+        }
+
+        NorthNetwork network = new NorthNetwork(user.token, user.user + "", houseHolder, gateways);
 
         return network;
     }
