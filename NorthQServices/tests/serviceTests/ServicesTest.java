@@ -12,15 +12,17 @@ import services.CredentialsService;
 import services.NorthqServices;
 
 public class ServicesTest {
+    NorthqServices ns;
+    CredentialsService cs;
 
     @Before
     public void setUp() throws Exception {
+        ns = new NorthqServices();
+        cs = new CredentialsService();
     }
 
     @Test
     public void mapGenerationTest() throws Exception {
-        NorthqServices ns = new NorthqServices();
-        CredentialsService cs = new CredentialsService();
         ArrayList<String> user = cs.getUserCredentials();
         NorthNetwork network = ns.mapNorthQNetwork(user.get(0), user.get(1));
         assertEquals(network.getUserId(), "2166");
@@ -35,6 +37,7 @@ public class ServicesTest {
 
     }
 
+    /**/
     @Test
     public void plugOffTest() {
 
