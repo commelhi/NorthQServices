@@ -50,6 +50,9 @@ public class NorthNetwork {
 
     @Override
     public String toString() {
-        return token;
+        return "token: "+ token+
+        		"\ngateway id: "+gateways.get(0).getGatewayId()+
+        		"\nthings: "+gateways.get(0).getThings().size();
+        
     }
 }
