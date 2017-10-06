@@ -13,30 +13,32 @@ import model.NorthNetwork;
 import model.Qmotion;
 import model.Qplug;
 import model.json.Gateway;
-import model.json.GatewayHolder;
 import model.json.GatewayStatus;
 import model.json.House;
-import model.json.HouseHolder;
 import model.json.User;
+import model.json.UserNotification;
+import model.json.UserNotificationHolder;
 
 public class NorthqServices {
     private NetworkUtils networkUtils = new NetworkUtils();
 
-    // Untested!!!
+    // Requires: a username and password
+    // Returns: returns the NorthNetwork object
     public NorthNetwork mapNorthQNetwork(String username, String password) throws Exception {
         Gson gson = new Gson();
-        Response loginResponse = postLogin(username, password);
-        User user = gson.fromJson(loginResponse.readEntity(String.class), User.class);
+        User user = postLogin(username, password);
 
-        // possible mapping errors
+        // Gets houses.
         Response houseResponse = getCurrentUserHouses(user.user + "", user.token);
         House[] householder = gson.fromJson(houseResponse.readEntity(String.class), House[].class);
         House house = householder[0]; // default hack
 
+        // Gets house gateways.
         Response gatewaysResponse = getHouseGateways(house.id + "", user.user + "", user.token);
         Gateway[] gatewayArray = gson.fromJson(gatewaysResponse.readEntity(String.class), Gateway[].class);
         Gateway gateway = gatewayArray[0];
-        // String gatewayId, String userId, String token
+
+        // Get gateway status for each gateway.
         Response gatewayStatusResponse = getGatewayStatus(gateway.serial_nr, user.user + "", user.token);
         GatewayStatus gatewayStatus = gson.fromJson(gatewayStatusResponse.readEntity(String.class),
                 GatewayStatus.class);
@@ -50,14 +52,17 @@ public class NorthqServices {
 
     // Requires: user name and password for login
     // Returns: a string representation of JSON object returned by northQ restful services
-    public Response postLogin(String username, String password) throws Exception {
+    public User postLogin(String username, String password) throws Exception {
         Form form = new Form();
         form.param("username", username);
         form.param("password", password);
         Response response = networkUtils.getHttpPostResponse("https://homemanager.tv/token/new.json", form);
         // Test success of request
         if (response.getStatus() == 200) {
-            return response;
+            Gson gson = new Gson();
+            User user = gson.fromJson(response.readEntity(String.class), User.class);
+            response.close();
+            return user;
         } else {
             response.close();
             throw new NullPointerException("token not recieved http error code: " + response.getStatus());
@@ -171,6 +176,37 @@ public class NorthqServices {
         form.param("node_id", motion.getNodeID());
         Response response = networkUtils.getHttpPostResponse("https://homemanager.tv/main/disArmUserComponent", form);
         return response;
+    }
+
+    // Requires: a user, token,houseId and a pagenumber as strings
+    // Returns: an UserNotificationHolder
+    public UserNotificationHolder getNotificationArray(String user, String token, String houseId, String pageNum) {
+        try {
+            Response response = getNotifications(user, token, houseId, pageNum);
+            String jsonString = response.readEntity(String.class);
+            Gson gson = new Gson();
+            UserNotificationHolder notifications = gson.fromJson(jsonString, UserNotificationHolder.class);
+            return notifications;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean isTriggered(UserNotificationHolder notifications) {
+        UserNotification latestNotification = notifications.UserNotifications.get(0);
+
+        long latestNotifTimestamp = latestNotification.notification.timestamp * 1000;
+
+        System.out.println("latest timestamp:" + latestNotifTimestamp);
+        System.out.println("current timestamp:" + System.currentTimeMillis());
+
+        long diff = System.currentTimeMillis() - latestNotifTimestamp;
+        if (diff < (30 * 60 * 1000)) { // 30 min
+            return true;
+
+        }
+        return false;
     }
 
 }
