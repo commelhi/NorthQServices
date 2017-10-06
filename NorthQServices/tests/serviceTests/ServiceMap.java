@@ -18,7 +18,7 @@ public class ServiceMap {
     }
 
     @Test
-    public void test() throws Exception {
+    public void mapGenerationTest() throws Exception {
         NorthqServices ns = new NorthqServices();
         CredentialsService cs = new CredentialsService();
         ArrayList<String> user = cs.getUserCredentials();
